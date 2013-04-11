@@ -157,6 +157,22 @@ describe 'XML builder:', ->
                 (expect ji, 'foo.bar.baz subtree').to.equal input.foo.bar.baz
                 null
 
+  describe '@CDATA:', ->
+
+    it 'wraps argument', ->
+      input = 'hello <[]>][<! world'
+      output = xml.builder {}, (tag) ->
+        tag 'x', @CDATA input
+      (expect output, 'xml.builder result').to.equal \
+        "<x><![CDATA[#{input}]]></x>"
+
+    it 'produces multiple CDATA sections if needed', ->
+      input = 'end of CDATA is -> "]]>" <- that'
+      output = xml.builder {}, (tag) ->
+        tag 'x', @CDATA input
+      (expect output, 'xml.builder result').to.equal \
+        '<x><![CDATA[end of CDATA is -> "]]]]><![CDATA[>" <- that]]></x>'
+
   it 'works', ->
     data =
       configuration:
@@ -177,6 +193,12 @@ describe 'XML builder:', ->
           { uid: 0, name: 'root' }
           { uid: 1, name: 'leaf' }
         ]
+        scripts:
+          build:
+            enabled: 'true'
+            script: """
+            [[ -z "" ]]> /dev/null </dev/null && exit
+            """
 
     output = xml.builder data, (tag) ->
       tag 'configuration', (tag) ->
@@ -193,6 +215,10 @@ describe 'XML builder:', ->
               tag 'uid'
               tag 'name'
           count: users.length
+        tag 'scripts', (tag) ->
+          tag 'build', (tag, ji) ->
+            tag 'enabled'
+            tag 'script', @CDATA ji.script
 
     (expect output, 'xml output').to.equal \
       '<configuration>'                 +
@@ -215,5 +241,14 @@ describe 'XML builder:', ->
             '<name>leaf</name>'         +
           '</user>'                     +
         '</users>'                      +
+        '<scripts>'                     +
+          '<build>'                     +
+            '<enabled>true</enabled>'   +
+            '<script>'                  +
+              '<![CDATA[[[ -z "" ]]]]>' +
+              '<![CDATA[> /dev/null </dev/null && exit]]>' +
+            '</script>'                 +
+          '</build>'                    +
+        '</scripts>'                    +
       '</configuration>'
 
