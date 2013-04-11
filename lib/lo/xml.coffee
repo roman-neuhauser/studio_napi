@@ -42,7 +42,7 @@ xmldoc = ->
 
 xmltag = (name) ->
   @name = name
-  @attrs = {}
+  @attrs = null
   children = []
   @append = (child) ->
     children.push child
@@ -74,17 +74,23 @@ exports.builder = builder = (ji, more) ->
 
       switch arguments.length
         when 1
-          curr.append ctx?[name]
+          curr.append ctx[name] if ctx and name of ctx
         when 2
           body = arguments[1]
-          if typeof body is 'function'
-            ctx = ctx?[name]
-            body.call curr, (tag curr, ctx), ctx
-          else
-            curr.append body
+          switch typeof body
+            when 'function'
+              ctx = ctx?[name]
+              attrs = body.call curr, (tag curr, ctx), ctx
+              curr.attrs = attrs if attrs
+            when 'object'
+              curr.append ctx[name] if ctx and name of ctx
+              curr.attrs = body
+            else
+              curr.append body
         else
           [ctx, body] = [arguments[1], arguments[2]]
-          body.call curr, (tag curr, ctx), ctx
+          attrs = body.call curr, (tag curr, ctx), ctx
+          curr.attrs = attrs if attrs
 
       null
 
