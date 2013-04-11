@@ -29,3 +29,70 @@ exports.transform = (transforms) -> (sig, result, done) ->
   t = transforms[sig].response
   t sig, result, done
 
+xmldoc = ->
+  children = []
+  @append = (child) ->
+    children.push child
+    this
+  @toString = ->
+    rv = ''
+    rv += c.toString() for c in children
+    rv
+  this
+
+xmltag = (name) ->
+  @name = name
+  @attrs = {}
+  children = []
+  @append = (child) ->
+    children.push child
+    this
+  @toString = ->
+    rv = "<#{name}"
+    if @attrs
+      rv += " #{n}=\"#{v}\"" for n, v of @attrs
+    rv += "/" unless children.length
+    rv += ">"
+    if children.length
+      rv += children.join('')
+      rv += "</#{name}>"
+    rv
+  this
+
+exports.builder = builder = (ji, more) ->
+
+  root = new xmldoc
+
+  tag = (par, ji) ->
+
+    impl = (name, _1, _2) ->
+
+      # do not clobber state shared between invocations
+      ctx = ji
+
+      par.append curr = new xmltag name
+
+      switch arguments.length
+        when 1
+          curr.append ctx?[name]
+        when 2
+          body = arguments[1]
+          if typeof body is 'function'
+            ctx = ctx?[name]
+            body.call curr, (tag curr, ctx), ctx
+          else
+            curr.append body
+        else
+          [ctx, body] = [arguments[1], arguments[2]]
+          body.call curr, (tag curr, ctx), ctx
+
+      null
+
+    impl.attrs = (attrs) ->
+      par.attrs = attrs
+
+    impl
+
+  more.call root, (tag root, ji), ji
+
+  root.toString()
