@@ -40,6 +40,16 @@ xmldoc = ->
     rv
   this
 
+entities = (v) ->
+  values =
+    '<': '&lt;'
+    '>': '&gt;'
+    '&': '&amp;'
+    '"': '&quot;'
+    "'": '&apos;'
+  (String v).replace /[<>&"']/, (v) ->
+    values[v]
+
 xmltag = (name) ->
   @name = name
   @attrs = null
@@ -50,7 +60,7 @@ xmltag = (name) ->
   @toString = ->
     rv = "<#{name}"
     if @attrs
-      rv += " #{n}=\"#{v}\"" for n, v of @attrs
+      rv += " #{n}=\"#{entities v}\"" for n, v of @attrs
     rv += "/" unless children.length
     rv += ">"
     if children.length
