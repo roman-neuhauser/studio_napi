@@ -51,12 +51,12 @@ global.async = (done, test) -> (args...) ->
 global.responds_to = (req, test) ->
   it "responds to #{req}", test
 
-parse = (file, done) ->
+parseXML = (file, done) ->
   fs.readFile file, (e, r) ->
     return done e if e
     xml.parse r, done
 
-exports.parse = parse
+exports.parseXML = parseXML
 
 filerpc = (dir, api2file) -> (httpmethod, apimethod, args..., done) ->
   file = api2file["#{httpmethod} #{apimethod}"] or apimethod[1..]

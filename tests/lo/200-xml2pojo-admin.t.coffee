@@ -4,7 +4,7 @@ xml   = require './lib-lo-xml'
 
 transform = xml.to_js admin.transforms
 
-parse = tools.parse
+parse = tools.parseXML
 
 describe 'XML -> POJO xforms, admin:', ->
 

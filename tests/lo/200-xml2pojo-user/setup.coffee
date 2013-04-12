@@ -4,4 +4,4 @@ xml = require '../lib-lo-xml'
 
 exports.transform = xml.to_js user.transforms
 
-exports.parse = tools.parse
+exports.parse = tools.parseXML
