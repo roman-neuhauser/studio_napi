@@ -209,6 +209,9 @@ describe 'XML builder:', ->
           tag 'language'
           tag 'timezone', (tag) ->
             tag 'location'
+        tag 'firewall', (tag, ji) ->
+          tag 'enabled'
+          tag 'open_port', port for port in ji.open_ports
         tag 'users', (tag, users) ->
           for user in users
             tag 'user', user, (tag) ->
@@ -231,6 +234,11 @@ describe 'XML builder:', ->
             '<location>UTC</location>'  +
           '</timezone>'                 +
         '</locale>'                     +
+        '<firewall>'                    +
+          '<enabled>false</enabled>'    +
+          '<open_port>ssh</open_port>'  +
+          '<open_port>http</open_port>' +
+        '</firewall>'                   +
         '<users count="2">'             +
           '<user>'                      +
             '<uid>0</uid>'              +

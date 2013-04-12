@@ -86,6 +86,16 @@ xmltag = (name) ->
     rv
   this
 
+assign_attrs = (node, vals) ->
+  return unless typeof vals is 'object'
+  return if vals instanceof Array
+  return if vals instanceof Number
+  return if vals instanceof String
+
+  attrs = {}
+  attrs[k] = v for k, v of vals
+  node.attrs = attrs
+
 exports.builder = builder = (ji, more) ->
 
   root = new xmldoc
@@ -107,17 +117,15 @@ exports.builder = builder = (ji, more) ->
           switch typeof body
             when 'function'
               ctx = ctx?[name]
-              attrs = body.call curr, (tag curr, ctx), ctx
-              curr.attrs = attrs if attrs
+              assign_attrs curr, (body.call curr, (tag curr, ctx), ctx)
             when 'object'
               curr.append ctx[name] if ctx and name of ctx
-              curr.attrs = body
+              assign_attrs curr, body
             else
               curr.append body
         else
           [ctx, body] = [arguments[1], arguments[2]]
-          attrs = body.call curr, (tag curr, ctx), ctx
-          curr.attrs = attrs if attrs
+          assign_attrs curr, (body.call curr, (tag curr, ctx), ctx)
 
       null
 
