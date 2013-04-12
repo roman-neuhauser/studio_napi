@@ -32,7 +32,7 @@ exports.api = (methods) -> (rpcgen, xml) ->
 
   xml ?= (require './xml')
 
-  xml2pojo = xml.transform methods
+  xml2pojo = xml.to_js methods
 
   rpc = rpcgen methods
 

@@ -22,7 +22,7 @@ deattr = (xo) ->
       deattr v
   xo
 
-exports.transform = (transforms) -> (sig, result, done) ->
+exports.to_js = (transforms) -> (sig, result, done) ->
   unless transforms[sig]
     return done new Error "#{sig}: unknown method"
 

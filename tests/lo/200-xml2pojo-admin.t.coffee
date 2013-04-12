@@ -2,7 +2,7 @@ tools = require '../tools'
 admin = require './lib-lo-admin'
 xml   = require './lib-lo-xml'
 
-transform = xml.transform admin.transforms
+transform = xml.to_js admin.transforms
 
 parse = tools.parse
 

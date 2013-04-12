@@ -55,10 +55,10 @@ describe 'common.api', ->
     myrpc = sinon.mock().once().returns boundrpc
     myxml =
       parse: sinon.mock().never()
-      transform: sinon.mock().once()
+      to_js: sinon.mock().once()
       verify: ->
         @parse.verify()
-        @transform.verify()
+        @to_js.verify()
     mycb = sinon.mock().once().withExactArgs 'rofl'
 
     napi = (common.api methods) myrpc, myxml
@@ -74,7 +74,7 @@ describe 'common.api', ->
       cb undefined, fakeHTTPresponse
     xml =
       parse: (_, cb) -> cb 'xml parsing error'
-      transform: ->
+      to_js: ->
 
     mycb = sinon.mock().once().withExactArgs 'xml parsing error'
 
@@ -92,7 +92,7 @@ describe 'common.api', ->
       cb undefined, fakeHTTPresponse
     myxml =
       parse: (a, cb) -> cb undefined, response
-      transform: ->
+      to_js: ->
 
     mycb = sinon.mock().once().withExactArgs response.error
 
