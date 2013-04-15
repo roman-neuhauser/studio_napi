@@ -58,6 +58,18 @@ parseXML = (file, done) ->
 
 exports.parseXML = parseXML
 
+parseJSON = (file, done) ->
+  fs.readFile file, (e, r) ->
+    return done e if e
+    rv = null
+    try
+      rv = JSON.parse r
+    catch e
+      return done e
+    return done undefined, rv
+
+exports.parseJSON = parseJSON
+
 filerpc = (dir, api2file) -> (httpmethod, apimethod, args..., done) ->
   file = api2file["#{httpmethod} #{apimethod}"] or apimethod[1..]
   fs.readFile "tests/#{dir}/#{file}.xml", done

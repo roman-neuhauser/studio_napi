@@ -69,8 +69,9 @@ transforms =
           xo.settings.pae_enabled = 'false'
         if xo.lvm.volumes
           xo.lvm.volumes = as_array xo.lvm.volumes.volume
-        for p in 'gpg_key_name server_host vendor'.split ' '
-          stringize xo.slms, p
+        if xo.slms
+          for p in 'gpg_key_name server_host vendor'.split ' '
+            stringize xo.slms, p
         xo
       done undefined, configuration:
         output xo.configuration
@@ -78,6 +79,67 @@ transforms =
   'GET /appliances/:app/configuration/logo':
     response:
       on
+
+  'PUT /appliances/:app/configuration':
+    request:
+      input: (ji) ->
+        xml = require './xml'
+        xml.builder ji, (tag) ->
+          tag 'configuration', (tag) ->
+            tag 'id'
+            tag 'name'
+            tag 'version'
+            tag 'type'
+            tag 'locale', (tag) ->
+              tag 'keyboard_layout'
+              tag 'language'
+              tag 'timezone', (tag) ->
+                tag 'location'
+            tag 'network', (tag) ->
+              tag 'type'
+            tag 'firewall', (tag, ji) ->
+              tag 'enabled'
+              tag 'open_port', port for port in ji.open_ports
+            tag 'users', (tag, ji) ->
+              for user in ji
+                tag 'user', user, (tag) ->
+                  tag 'uid'
+                  tag 'name'
+                  tag 'password'
+                  tag 'group'
+                  tag 'shell'
+                  tag 'homedir'
+              count: ji.length
+            tag 'eulas', (tag, ji) ->
+              tag 'eula', eula for eula in ji
+              count: ji.length
+            tag 'settings', (tag) ->
+              tag 'memory_size'
+              tag 'disk_size'
+              tag 'swap_size'
+              tag 'pae_enabled'
+              tag 'xen_host_mode_enabled'
+              tag 'cdrom_enabled'
+              tag 'webyast_enabled'
+              tag 'live_installer_enabled'
+              tag 'public_clonable'
+              tag 'runlevel'
+            tag 'lvm', (tag) ->
+              tag 'enabled'
+            tag 'scripts', (tag) ->
+              tag 'build', (tag, ji) ->
+                tag 'enabled'
+                tag 'script' if ji.enabled is 'true'
+              tag 'boot', (tag, ji) ->
+                tag 'enabled'
+                tag 'script' if ji.enabled is 'true'
+              tag 'autoyast', (tag, ji) ->
+                tag 'enabled'
+                tag 'script' if ji.enabled is 'true'
+
+    response:
+      root: 'success'
+      output: -> true
 
   'GET /appliances/:app/gpg_keys':
     response: (sig, xo, done) ->

@@ -29,6 +29,9 @@ exports.to_js = (transforms) -> (sig, result, done) ->
   t = transforms[sig].response
   t sig, result, done
 
+exports.from_js = (transforms) -> (sig, jsobj) ->
+  transforms[sig].request.input jsobj
+
 # A CDATA section cannot contain the string "]]>" and therefore
 # it is not possible for a CDATA section to contain nested CDATA
 # sections.
