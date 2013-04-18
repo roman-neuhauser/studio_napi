@@ -295,6 +295,11 @@ transforms =
 
         appliance: rv
 
+  'GET /gallery/appliance/:app/testdrive':
+    response:
+      root: 'gallery'
+      output: asis
+
 exports.transforms = transforms
 exports.api = common.api transforms
 
