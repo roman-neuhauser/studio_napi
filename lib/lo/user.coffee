@@ -260,6 +260,11 @@ transforms =
         app.comments = as_array app.comments.comment
         xo
 
+  'GET /gallery/appliance/:app/rating':
+    response:
+      root: 'gallery'
+      output: asis
+
 exports.transforms = transforms
 exports.api = common.api transforms
 
