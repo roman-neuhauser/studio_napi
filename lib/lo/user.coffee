@@ -229,6 +229,29 @@ transforms =
           stringize app, 'description'
         appliances: apps
 
+  'GET /gallery/appliance/:app':
+    response:
+      root: 'gallery'
+      output: (xo) ->
+        app = xo.appliance
+        old = as_array app.formats.format
+        formats = {}
+        for f in old
+          formats[f['#']] = f['@'].md5
+        app.formats = formats
+        app.configuration.accounts = app.configuration.accounts.account
+        app.locale = {
+          keyboard_layout: app.keyboard_layout
+          language: app.language
+          timezone: app.timezone
+        }
+        delete app.keyboard_layout
+        delete app.language
+        delete app.timezone
+        app.firewall.open_ports = as_array app.firewall.open_port
+        delete app.firewall.open_port
+        xo
+
 exports.transforms = transforms
 exports.api = common.api transforms
 
