@@ -265,6 +265,36 @@ transforms =
       root: 'gallery'
       output: asis
 
+  'GET /gallery/appliance/:app/software':
+    response:
+      root: 'gallery'
+      output: (xo) ->
+        app = xo.appliance
+
+        repos = {}
+        old = as_array app.repositories.repository
+        for r in old
+          repos[r['#']] = r['@']
+
+        rv =
+          id: app.id
+          repositories: repos
+
+        for prop in ['selected_software', 'installed_software']
+          sw = app[prop]
+          rv[prop] = {}
+
+          for t in ['pattern', 'package']
+            old = as_array sw[t]
+            fix = {}
+            for p, i in old
+              fix[p['#']] =
+                version: p['@'].version
+                from: p['@'].repository
+            rv[prop]["#{t}s"] = fix
+
+        appliance: rv
+
 exports.transforms = transforms
 exports.api = common.api transforms
 
