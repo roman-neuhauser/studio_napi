@@ -300,6 +300,13 @@ transforms =
       root: 'gallery'
       output: asis
 
+  'GET /gallery/appliance/:app/versions':
+    response:
+      root: 'gallery'
+      output: (xo) ->
+        to_array xo.appliance, 'version'
+        xo
+
 exports.transforms = transforms
 exports.api = common.api transforms
 
