@@ -4,6 +4,10 @@ asis = common.asis
 as_array = common.as_array
 to_array = common.to_array
 
+stringize = (xo, name) ->
+  xo[name] = '' unless xo[name]?.length
+  xo
+
 appliance =
   root: 'appliance'
   output: (xo) ->
@@ -215,6 +219,15 @@ transforms =
       output: (xo) ->
         as_array xo.testdrive
 
+  'GET /gallery/appliances':
+    response:
+      root: 'gallery'
+      output: (xo) ->
+        apps = xo.appliances.appliance
+        for app in apps
+          stringize app, 'homepage'
+          stringize app, 'description'
+        appliances: apps
 
 exports.transforms = transforms
 exports.api = common.api transforms
