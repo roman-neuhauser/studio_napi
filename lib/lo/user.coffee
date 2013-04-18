@@ -252,6 +252,14 @@ transforms =
         delete app.firewall.open_port
         xo
 
+  'GET /gallery/appliance/:app/comments':
+    response:
+      root: 'gallery'
+      output: (xo) ->
+        app = xo.appliance
+        app.comments = as_array app.comments.comment
+        xo
+
 exports.transforms = transforms
 exports.api = common.api transforms
 
