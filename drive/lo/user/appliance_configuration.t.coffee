@@ -31,9 +31,20 @@ describe 'Low-level user API:', ->
         , 'network'
         , 'scripts'
         , 'settings'
+        , 'slms'
         , 'type'
         , 'users'
         , 'version'
+
+        (expect r.slms, 'slms').to.have.keys \
+          'enabled'
+        , 'gpg_key_name'
+        , 'server_host'
+        , 'vendor'
+        (expect r.slms.enabled, 'slms.enabled').to.match /true|false/
+        (expect r.slms.gpg_key_name, 'slms.gpg_key_name').to.be.a 'string'
+        (expect r.slms.server_host, 'slms.server_host').to.be.a 'string'
+        (expect r.slms.vendor, 'slms.vendor').to.be.a 'string'
 
         (expect r.locale, 'locale').to.have.keys \
           'keyboard_layout'

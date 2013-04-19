@@ -102,6 +102,12 @@ It provides Linux, Apache, MySQL, and Perl.</description>
       </volume>
     </volumes>
   </lvm>
+  <slms>
+    <enabled>false</enabled>
+    <gpg_key_name></gpg_key_name>
+    <server_host></server_host>
+    <vendor></vendor>
+  </slms>
   <scripts>
     <build>
       <enabled>true</enabled>

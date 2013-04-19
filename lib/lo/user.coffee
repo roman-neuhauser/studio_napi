@@ -73,6 +73,10 @@ transforms =
           xo.settings.pae_enabled = 'false'
         if xo.lvm.volumes
           xo.lvm.volumes = as_array xo.lvm.volumes.volume
+        for p in 'gpg_key_name server_host vendor'.split ' '
+          v = xo.slms[p]
+          v = '' if v instanceof Array and v.length is 0
+          xo.slms[p] = v
         xo
 
   'GET /appliances/:app/configuration/logo':

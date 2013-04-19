@@ -113,6 +113,12 @@ describe 'XML -> POJO xforms, user: GET /appliances/:app/configuration', ->
         }
       ]
 
+    slms:
+      enabled: 'false'
+      gpg_key_name: ''
+      server_host: ''
+      vendor: ''
+
     scripts:
 
       build:
