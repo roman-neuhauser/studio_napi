@@ -74,9 +74,7 @@ transforms =
         if xo.lvm.volumes
           xo.lvm.volumes = as_array xo.lvm.volumes.volume
         for p in 'gpg_key_name server_host vendor'.split ' '
-          v = xo.slms[p]
-          v = '' if v instanceof Array and v.length is 0
-          xo.slms[p] = v
+          stringize xo.slms, p
         xo
 
   'GET /appliances/:app/configuration/logo':
@@ -244,6 +242,17 @@ transforms =
           formats[f['#']] = f['@'].md5
         app.formats = formats
         app.configuration.accounts = app.configuration.accounts.account
+        '
+          based_on
+          description
+          homepage
+          id
+          name
+          publisher
+          release_notes
+          username
+          version
+        '.trim().split(/\s+/).forEach (p) -> stringize app, p
         app.locale = {
           keyboard_layout: app.keyboard_layout
           language: app.language
