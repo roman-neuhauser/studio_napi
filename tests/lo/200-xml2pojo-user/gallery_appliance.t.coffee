@@ -1,11 +1,11 @@
 {parse, transform} = require './setup'
 
-describe 'XML -> POJO xforms, user: GET /gallery/appliance/:app', ->
+describe 'XML -> POJO xforms, user: GET /gallery/appliances/:app', ->
 
   it 'gives information about the appliance', (done) ->
     parse 'tests/user/GET_gallery_appliance.xml', (err, r) ->
       no_error err
-      transform 'GET /gallery/appliance/:app', r, async done, (e, r) ->
+      transform 'GET /gallery/appliances/:app', r, async done, (e, r) ->
         no_error e
         contains r, gallery: appliance:
           id: "22"

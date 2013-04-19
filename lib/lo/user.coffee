@@ -229,7 +229,7 @@ transforms =
           stringize app, 'description'
         appliances: apps
 
-  'GET /gallery/appliance/:app':
+  'GET /gallery/appliances/:app':
     response:
       root: 'gallery'
       output: (xo) ->
@@ -252,7 +252,7 @@ transforms =
         delete app.firewall.open_port
         xo
 
-  'GET /gallery/appliance/:app/comments':
+  'GET /gallery/appliances/:app/comments':
     response:
       root: 'gallery'
       output: (xo) ->
@@ -260,12 +260,12 @@ transforms =
         app.comments = as_array app.comments.comment
         xo
 
-  'GET /gallery/appliance/:app/rating':
+  'GET /gallery/appliances/:app/rating':
     response:
       root: 'gallery'
       output: asis
 
-  'GET /gallery/appliance/:app/software':
+  'GET /gallery/appliances/:app/software':
     response:
       root: 'gallery'
       output: (xo) ->
@@ -295,12 +295,12 @@ transforms =
 
         appliance: rv
 
-  'GET /gallery/appliance/:app/testdrive':
+  'GET /gallery/appliances/:app/testdrive':
     response:
       root: 'gallery'
       output: asis
 
-  'GET /gallery/appliance/:app/versions':
+  'GET /gallery/appliances/:app/versions':
     response:
       root: 'gallery'
       output: (xo) ->
