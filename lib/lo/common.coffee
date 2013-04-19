@@ -45,7 +45,9 @@ exports.api = (methods) -> (rpcgen, xml) ->
         xml.parse body, (err, result) ->
           return done err if err
           return done result.error if result.error and result.error.code
-          done undefined, xml2pojo sig, result
+          xml2pojo sig, result, (err, result) ->
+            return done err if err
+            done undefined, result
     '*/*': (sig) -> (res, done) ->
       done undefined, res
 

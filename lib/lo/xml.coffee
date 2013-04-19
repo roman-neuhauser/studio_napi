@@ -22,8 +22,13 @@ deattr = (xo) ->
       deattr v
   xo
 
-exports.transform = (transforms) -> (sig, result) ->
+exports.transform = (transforms) -> (sig, result, done) ->
+  unless transforms[sig]
+    return done new Error "#{sig}: unknown method"
+
   t = transforms[sig].response
-  result[t.root] = t.output result[t.root]
-  deattr result
+  rv = {}
+  rv[t.root] = t.output result[t.root]
+  deattr rv
+  done undefined, rv
 

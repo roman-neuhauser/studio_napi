@@ -3,22 +3,23 @@
 describe 'XML -> POJO xforms, user:', ->
 
 test = (request) -> (done) ->
-    parse 'tests/user/GET_repositories.xml', async done, (err, r) ->
+    parse 'tests/user/GET_repositories.xml', (err, r) ->
       no_error err
-      r = transform request, r
-      contains r, repositories: [
-        {
-          id: '7'
-          name: 'Moblin Base'
-          type: 'rpm-md'
-          base_system: '11.1'
-          base_url: 'http://download.opensuse.org/repositories/Moblin:/Base/openSUSE_11.1'
-          matches: {
-            repository_name: 'moblin base'
-            repository_base_url: 'http://download.opensuse.org/repositories/moblin:/base/opensuse_11.1'
+      transform request, r, async done, (e, r) ->
+        no_error e
+        contains r, repositories: [
+          {
+            id: '7'
+            name: 'Moblin Base'
+            type: 'rpm-md'
+            base_system: '11.1'
+            base_url: 'http://download.opensuse.org/repositories/Moblin:/Base/openSUSE_11.1'
+            matches: {
+              repository_name: 'moblin base'
+              repository_base_url: 'http://download.opensuse.org/repositories/moblin:/base/opensuse_11.1'
+            }
           }
-        }
-      ]
+        ]
 
   describe 'GET /repositories', ->
     it 'gives a list of repositories'

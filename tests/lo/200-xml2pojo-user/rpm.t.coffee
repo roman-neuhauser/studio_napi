@@ -3,13 +3,14 @@
 describe 'XML -> POJO xforms, user: GET /rpms/:rpm', ->
 
   it 'gives information about an uploaded rpm', (done) ->
-    parse 'tests/user/GET_rpm.xml', async done, (err, r) ->
+    parse 'tests/user/GET_rpm.xml', (err, r) ->
       no_error err
-      r = transform 'GET /rpms/:rpm', r
-      contains r, rpm:
-        id: '54'
-        filename: 'fate-1.3.10-14.3.i586.rpm'
-        size: '587500'
-        archive: 'false'
-        base_system: 'SLED11'
+      transform 'GET /rpms/:rpm', r, async done, (e, r) ->
+        no_error e
+        contains r, rpm:
+          id: '54'
+          filename: 'fate-1.3.10-14.3.i586.rpm'
+          size: '587500'
+          archive: 'false'
+          base_system: 'SLED11'
 
