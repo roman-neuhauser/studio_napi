@@ -27,8 +27,5 @@ exports.transform = (transforms) -> (sig, result, done) ->
     return done new Error "#{sig}: unknown method"
 
   t = transforms[sig].response
-  rv = {}
-  rv[t.root] = t.output result[t.root]
-  deattr rv
-  done undefined, rv
+  t sig, result, done
 

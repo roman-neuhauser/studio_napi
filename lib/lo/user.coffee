@@ -8,10 +8,8 @@ stringize = (xo, name) ->
   xo[name] = '' unless xo[name]?.length
   xo
 
-appliance =
-  root: 'appliance'
-  output: (xo) ->
-    to_array xo, 'build'
+appliance = (xo) ->
+    to_array xo.appliance, 'build'
     xo
 
 template_set = (ts) ->
@@ -22,43 +20,41 @@ template_set = (ts) ->
 
 transforms =
   'GET /account':
-    response:
-      root: 'account'
-      output: (xo) ->
+    response: (sig, xo, done) ->
+      output = (xo) ->
         to_array xo, 'openid_url'
-        xo
+      done undefined, account:
+        output xo.account
 
   'GET /api_version':
-    response:
-      root: 'version'
-      output: asis
+    response: (sig, xo, done) ->
+      done undefined, xo
 
   'GET /appliances':
-    response:
-      root: 'appliances'
-      output: (xo) ->
+    response: (sig, xo, done) ->
+      output = (xo) ->
         xo = as_array xo.appliance
         for a in xo
           to_array a, 'build'
         xo
+      done undefined, appliances:
+        output xo.appliances
 
   'POST /appliances':
-    response:
-      appliance
+    response: (sig, xo, done) ->
+      done undefined, appliance xo
 
   'GET /appliances/:app':
-    response:
-      appliance
+    response: (sig, xo, done) ->
+      done undefined, appliance xo
 
   'DELETE /appliances/:app':
-    response:
-      root: 'success'
-      output: -> true
+    response: (sig, xo, done) ->
+      done undefined, success: true
 
   'GET /appliances/:app/configuration':
-    response:
-      root: 'configuration'
-      output: (xo) ->
+    response: (sig, xo, done) ->
+      output = (xo) ->
         to_array xo, 'tag'
         xo.firewall.open_ports = as_array xo.firewall.open_port
         delete xo.firewall.open_port
@@ -76,39 +72,42 @@ transforms =
         for p in 'gpg_key_name server_host vendor'.split ' '
           stringize xo.slms, p
         xo
+      done undefined, configuration:
+        output xo.configuration
 
   'GET /appliances/:app/configuration/logo':
     response:
       on
 
   'GET /appliances/:app/gpg_keys':
-    response:
-      root: 'gpg_keys'
-      output: (xo) ->
+    response: (sig, xo, done) ->
+      output = (xo) ->
         as_array xo.gpg_key
+      done undefined, gpg_keys:
+        output xo.gpg_keys
 
   'GET /appliances/:app/gpg_key/:key':
-    response:
-      root: 'gpg_key'
-      output: asis
+    response: (sig, xo, done) ->
+      done undefined, xo
 
   'GET /appliances/:app/repositories':
-    response:
-      root: 'repositories'
-      output: (xo) ->
+    response: (sig, xo, done) ->
+      output = (xo) ->
         as_array xo.repository
+      done undefined, repositories:
+        output xo.repositories
 
   'GET /appliances/:app/sharing':
-    response:
-      root: 'appliance'
-      output: (xo) ->
+    response: (sig, xo, done) ->
+      output = (xo) ->
         xo.read_users = as_array xo.read_users.username
         xo
+      done undefined, appliance:
+        output xo.appliance
 
   'GET /appliances/:app/software':
-    response:
-      root: 'software'
-      output: (xo) ->
+    response: (sig, xo, done) ->
+      output = (xo) ->
         fix = (p) ->
           if p['#'] then { name: p['#'], version: p['@'].version }
           else { name: p }
@@ -125,53 +124,58 @@ transforms =
           packages: packages
         }
 
+      done undefined, software:
+        output xo.software
+
   'GET /appliances/:app/status':
-    response:
-      root: 'status'
-      output: (xo) ->
+    response: (sig, xo, done) ->
+      output = (xo) ->
         xo.issues = as_array xo.issues.issue
         xo
+      done undefined, status:
+        output xo.status
 
   'GET /builds':
-    response:
-      root: 'builds'
-      output: (xo) ->
+    response: (sig, xo, done) ->
+      output = (xo) ->
         xo = as_array xo.build
         xo
+      done undefined, builds:
+        output xo.builds
 
   'GET /builds/:bld':
-    response:
-      root: 'build'
-      output: (xo) ->
+    response: (sig, xo, done) ->
+      output = (xo) ->
         xo.profile.steps = xo.profile.steps.step
         xo
+      done undefined, build:
+        output xo.build
 
   'GET /files':
-    response:
-      root: 'files'
-      output: (xo) ->
+    response: (sig, xo, done) ->
+      output = (xo) ->
         as_array xo.file
+      done undefined, files:
+        output xo.files
 
   'GET /files/:file':
-    response:
-      root: 'file'
-      output: asis
+    response: (sig, xo, done) ->
+      done undefined, xo
 
   'GET /repositories':
-    response:
-      root: 'repositories'
-      output: (xo) ->
+    response: (sig, xo, done) ->
+      output = (xo) ->
         as_array xo.repository
+      done undefined, repositories:
+        output xo.repositories
 
   'GET /repositories/:repo':
-    response:
-      root: 'repository'
-      output: asis
+    response: (sig, xo, done) ->
+      done undefined, xo
 
   'GET /rpms':
-    response:
-      root: 'rpms'
-      output: (xo) ->
+    response: (sig, xo, done) ->
+      output = (xo) ->
         xo.base_system = xo['@'].base_system
         delete xo['@']
         xo.rpms = as_array xo.rpm
@@ -179,63 +183,63 @@ transforms =
           r.base_system = xo.base_system
         delete xo.rpm
         xo
+      done undefined, rpms:
+        output xo.rpms
 
   'GET /rpms/:rpm':
-    response:
-      root: 'rpm'
-      output: asis
+    response: (sig, xo, done) ->
+      done undefined, xo
 
   'GET /running_builds':
-    response:
-      root: 'running_builds'
-      output: (xo) ->
+    response: (sig, xo, done) ->
+      output = (xo) ->
         as_array xo.running_build
+      done undefined, running_builds:
+        output xo.running_builds
 
   'GET /running_builds/:bld':
-    response:
-      root: 'running_build'
-      output: asis
+    response: (sig, xo, done) ->
+      done undefined, xo
 
   'GET /template_sets':
-    response:
-      root: 'template_sets'
-      output: (xo) ->
+    response: (sig, xo, done) ->
+      output = (xo) ->
         xo = as_array xo.template_set
         for ts in xo
           template_set ts
         xo
+      done undefined, template_sets:
+        output xo.template_sets
 
   'GET /template_sets/:set':
-    response:
-      root: 'template_set'
-      output: template_set
+    response: (sig, xo, done) ->
+      done undefined, template_set:
+        template_set xo.template_set
 
   'POST /testdrives':
-    response:
-      root: 'testdrive'
-      output: asis
+    response: (sig, xo, done) ->
+      done undefined, xo
 
   'GET /testdrives':
-    response:
-      root: 'testdrives'
-      output: (xo) ->
+    response: (sig, xo, done) ->
+      output = (xo) ->
         as_array xo.testdrive
+      done undefined, testdrives:
+        output xo.testdrives
 
   'GET /gallery/appliances':
-    response:
-      root: 'gallery'
-      output: (xo) ->
-        apps = xo.appliances.appliance
+    response: (sig, xo, done) ->
+      output = (apps) ->
         for app in apps
           stringize app, 'homepage'
           stringize app, 'description'
-        appliances: apps
+        apps
+      done undefined, gallery: appliances:
+        output xo.gallery.appliances.appliance
 
   'GET /gallery/appliances/:app':
-    response:
-      root: 'gallery'
-      output: (xo) ->
-        app = xo.appliance
+    response: (sig, xo, done) ->
+      output = (app) ->
         old = as_array app.formats.format
         formats = {}
         for f in old
@@ -263,27 +267,25 @@ transforms =
         delete app.timezone
         app.firewall.open_ports = as_array app.firewall.open_port
         delete app.firewall.open_port
-        xo
+        app
+      done undefined, gallery: appliance:
+        output xo.gallery.appliance
 
   'GET /gallery/appliances/:app/comments':
-    response:
-      root: 'gallery'
-      output: (xo) ->
-        app = xo.appliance
+    response: (sig, xo, done) ->
+      output = (app) ->
         app.comments = as_array app.comments.comment
-        xo
+        app
+      done undefined, gallery: appliance:
+        output xo.gallery.appliance
 
   'GET /gallery/appliances/:app/rating':
-    response:
-      root: 'gallery'
-      output: asis
+    response: (sig, xo, done) ->
+      done undefined, xo
 
   'GET /gallery/appliances/:app/software':
-    response:
-      root: 'gallery'
-      output: (xo) ->
-        app = xo.appliance
-
+    response: (sig, xo, done) ->
+      output = (app) ->
         repos = {}
         old = as_array app.repositories.repository
         for r in old
@@ -306,19 +308,21 @@ transforms =
                 from: p['@'].repository
             rv[prop]["#{t}s"] = fix
 
-        appliance: rv
+        rv
+
+      done undefined, gallery: appliance:
+        output xo.gallery.appliance
 
   'GET /gallery/appliances/:app/testdrive':
-    response:
-      root: 'gallery'
-      output: asis
+    response: (sig, xo, done) ->
+      done undefined, xo
 
   'GET /gallery/appliances/:app/versions':
-    response:
-      root: 'gallery'
-      output: (xo) ->
-        to_array xo.appliance, 'version'
-        xo
+    response: (sig, xo, done) ->
+      output = (app) ->
+        to_array app, 'version'
+      done undefined, gallery: appliance:
+        output xo.gallery.appliance
 
 exports.transforms = transforms
 exports.api = common.api transforms
