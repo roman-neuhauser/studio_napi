@@ -16,9 +16,15 @@ describe 'Low-level user API:', ->
         (expect err, 'error').to.have.property 'code', 'invalid_appliance_id'
         (expect err, 'error').to.have.property 'message'
 
-    it 'works with existing template', (done) ->
+    it 'fails with an existing, unpublished, appliance', (done) ->
 
-      sess GET apimethod, { app: 711 }, async done, (err, r) ->
+      sess GET apimethod, { app: 1 }, async done, (err, r) ->
+        (expect err, 'error').to.have.property 'code', 'access_denied'
+        (expect err, 'error').to.have.property 'message'
+
+    it 'works with an existing appliance', (done) ->
+
+      sess GET apimethod, { app: 1 }, async done, (err, r) ->
 
         no_error err
 
