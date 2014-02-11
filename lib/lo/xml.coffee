@@ -26,8 +26,11 @@ exports.to_js = (transforms) -> (sig, result, done) ->
   unless transforms[sig]
     return done new Error "#{sig}: unknown method"
 
-  t = transforms[sig].response
-  t sig, result, done
+  try
+    t = transforms[sig].response
+    t sig, result, done
+  catch e
+    done e
 
 exports.from_js = (transforms) -> (sig, jsobj) ->
   transforms[sig].request.input jsobj
